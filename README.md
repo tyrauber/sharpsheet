@@ -35,6 +35,7 @@ Options:
   --outputPath            Path to output folder           [default: "./sprites"]
   --outputFormat          Output image format                   [default: "png"]
   --outputQuality         Output image quality (0-100)             [default: 80]
+  --mapSprites            Output MapBox/MapLibre Sprites        [default: false]
   -h, --help              Show help                                    [boolean]
 
 Examples:

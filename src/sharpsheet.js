@@ -13,11 +13,12 @@ import ShelfPack from "@mapbox/shelf-pack";
 // });
 
 export default async function sharpsheet(input, _outputPath, options) {
+  const mapSprites = options.mapSprites || false;
   const border = options.border || 1;
   const sheetDimension = options.sheetDimension || 1024;
   const outputFormat = options.outputFormat || "png";
   const outputQuality = options.outputQuality || 100;
-  const outputFilename = options.outputFilename || "spritesheet.json";
+  const outputFilename = options.outputFilename || "sprite@2x";
   const compositeChunkSize = options.compositeChunkSize || 100;
   const sheetBackground = options.sheetBackground || { r: 0, g: 0, b: 0, alpha: 0 };
 
@@ -126,7 +127,7 @@ export default async function sharpsheet(input, _outputPath, options) {
           .toBuffer();
       }
 
-      const fileName = `sprite-${sheetDimension}-${index}.${outputFormat}`;
+      const fileName = `${outputFilename}.${outputFormat}`;
       const fileMeta = await sharp(compositeSheetBuffer, { raw: options })
         .toFormat(outputFormat, { quality: outputQuality })
         .toFile(outputPath + "/" + fileName);
@@ -159,9 +160,21 @@ export default async function sharpsheet(input, _outputPath, options) {
     spritesheets: coordinates,
   };
 
+  const mapSpritesJson = packed.flat()
+    .reduce((obj,{ left, top, width, height, name }) =>
+    Object.assign(obj, {
+      [name]: {
+        pixelRatio: 1,
+        height,
+        width,
+        x: left,
+        y: top
+      }
+    }), {});
+
   fs.writeFileSync(
-    outputPath + "/" + outputFilename,
-    JSON.stringify(jsonOut, null, 2)
+    outputPath + "/" + outputFilename+".json",
+    JSON.stringify(mapSprites ? mapSpritesJson : jsonOut, null, 2)
   );
 }
 
